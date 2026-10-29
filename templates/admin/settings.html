@@ -1,0 +1,44 @@
+{% extends "admin/base.html" %}
+{% block title %}Shop settings{% endblock %}
+{% block content %}
+<h1>Shop settings</h1>
+<form method="post">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+
+  <section class="card">
+    <h2>Basics</h2>
+    <div class="form-grid">
+      <label class="field">Shop name<input type="text" name="name" value="{{ s.name }}" maxlength="60" required></label>
+      <label class="field">WhatsApp number
+        <input type="tel" name="whatsapp" value="{{ s.whatsapp }}" inputmode="numeric" maxlength="24" placeholder="e.g. 23057053091">
+        <span class="hint">Country code then number, digits only. All order buttons go here.</span>
+      </label>
+      <label class="field">Currency symbol<input type="text" name="currency" value="{{ s.currency }}" maxlength="8"></label>
+      <label class="field wide">Tagline<input type="text" name="tagline" value="{{ s.tagline }}" maxlength="200"></label>
+      <label class="field wide">Footer text<input type="text" name="footer" value="{{ s.footer }}" maxlength="200"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>“How buying works” steps</h2>
+    <p class="hint" style="margin-top:0">Leave a row empty to remove it.</p>
+    {% set steps = s.steps_list + [['', ''], ['', '']] %}
+    {% for title, body in steps[:6] %}
+    <div class="step-row">
+      <label class="field">Step {{ loop.index }} title<input type="text" name="step_title" value="{{ title }}" maxlength="80"></label>
+      <label class="field">Text<input type="text" name="step_body" value="{{ body }}" maxlength="400"></label>
+    </div>
+    {% endfor %}
+  </section>
+
+  <section class="card">
+    <h2>“Sell yours” section</h2>
+    <div class="form-grid">
+      <label class="field wide">Heading<input type="text" name="sell_title" value="{{ s.sell_title }}" maxlength="120"></label>
+      <label class="field wide">Text<textarea name="sell_text" maxlength="600">{{ s.sell_text }}</textarea></label>
+    </div>
+  </section>
+
+  <div class="form-actions"><button class="btn" type="submit">Save settings</button></div>
+</form>
+{% endblock %}

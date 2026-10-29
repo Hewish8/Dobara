@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+{% block title %}Admins{% endblock %}
+{% block content %}
+<h1>Admins</h1>
+<div class="two">
+  <section class="card">
+    <h2>People who can manage the shop</h2>
+    <table>
+      <thead><tr><th>Username</th><th>Last sign-in</th><th></th></tr></thead>
+      {% for u in users %}
+      <tr>
+        <td><b>{{ u.username }}</b>{% if u.id == current_user().id %} <span class="muted">(you)</span>{% endif %}</td>
+        <td class="muted">{{ (u.last_login or 'never')|replace('T', ' ') }}</td>
+        <td class="num">
+          {% if u.id != current_user().id %}
+          <form class="inline" method="post" action="{{ url_for('admin_user_delete', user_id=u.id) }}"
+                onsubmit='return confirm({{ ("Remove admin “" ~ u.username ~ "”?")|tojson }})'>
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="linkbtn" type="submit">Remove</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </section>
+  <section class="card">
+    <h2>Add an admin</h2>
+    {% if error %}<div class="error-box">{{ error }}</div>{% endif %}
+    <form method="post" style="display:grid;gap:.75rem">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <label class="field">Username<input type="text" name="username" required maxlength="40" autocomplete="off" value="{{ request.form.username }}"></label>
+      <label class="field">Password (8+ characters)<input type="password" name="password" minlength="8" required autocomplete="new-password"></label>
+      <label class="field">Confirm password<input type="password" name="confirm" minlength="8" required autocomplete="new-password"></label>
+      <div><button class="btn" type="submit">Add admin</button></div>
+    </form>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Mukta:wght@400;500;700&display=swap" rel="stylesheet">
+<title>{% block title %}Admin{% endblock %} · Dobara admin</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+<div class="zari" aria-hidden="true"></div>
+{% if current_user() %}
+<header class="topbar"><div class="in">
+  <a class="logo" href="{{ url_for('admin_dashboard') }}">Dobara<small>admin</small></a>
+  <nav class="main" aria-label="Admin">
+    {% set ep = request.endpoint %}
+    <a href="{{ url_for('admin_dashboard') }}" class="{{ 'on' if ep == 'admin_dashboard' }}">Dashboard</a>
+    <a href="{{ url_for('admin_sarees') }}" class="{{ 'on' if ep in ('admin_sarees', 'admin_saree_form') }}">Sarees</a>
+    <a href="{{ url_for('admin_lists') }}" class="{{ 'on' if ep == 'admin_lists' }}">Lists</a>
+    <a href="{{ url_for('admin_settings') }}" class="{{ 'on' if ep == 'admin_settings' }}">Shop settings</a>
+    <a href="{{ url_for('admin_users') }}" class="{{ 'on' if ep == 'admin_users' }}">Admins</a>
+    <a href="{{ url_for('admin_account') }}" class="{{ 'on' if ep == 'admin_account' }}">My account</a>
+    <a href="{{ url_for('shop') }}" target="_blank" rel="noopener">View shop ↗</a>
+  </nav>
+  <div class="who">
+    {{ current_user().username }}
+    <form class="inline" method="post" action="{{ url_for('admin_logout') }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <button class="btn ghost small" type="submit">Log out</button>
+    </form>
+  </div>
+</div></header>
+{% endif %}
+<main class="page">
+  {% for cat, msg in get_flashed_messages(with_categories=true) %}
+    <div class="flash {{ 'error' if cat == 'error' }}" role="status">{{ msg }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</main>
+{% block scripts %}{% endblock %}
+</body>
+</html>

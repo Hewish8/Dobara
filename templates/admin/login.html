@@ -1,0 +1,16 @@
+{% extends "admin/base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<div class="auth">
+  <p class="brand">Dobara</p>
+  <h1>Admin sign in</h1>
+  {% if error %}<div class="error-box">{{ error }}</div>{% endif %}
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label class="field">Username<input type="text" name="username" autocomplete="username" required autofocus></label>
+    <label class="field">Password<input type="password" name="password" autocomplete="current-password" required></label>
+    <button class="btn" type="submit">Sign in</button>
+  </form>
+  <p class="muted"><a href="{{ url_for('shop') }}">← Back to the shop</a></p>
+</div>
+{% endblock %}

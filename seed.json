@@ -1,0 +1,90 @@
+{
+  "shop": {
+    "name": "Dobara",
+    "tagline": "Pre-loved sarees, worn once and ready to be draped again.",
+    "whatsapp": "23057053091",
+    "currency": "Rs"
+  },
+  "sarees": [
+    {
+      "id": 1,
+      "name": "Red Kanjeevaram silk with temple border",
+      "occasion": "Wedding",
+      "fabric": "Kanjeevaram",
+      "blouse": "Stitched, size 38",
+      "condition": "Worn once",
+      "price": 16500,
+      "original": 48000,
+      "colors": [
+        "#B71C1C",
+        "#E8A317"
+      ],
+      "photo": "seed-1.jpg",
+      "status": "available"
+    },
+    {
+      "id": 2,
+      "name": "Bottle green Banarasi with gold buta",
+      "occasion": "Wedding",
+      "fabric": "Banarasi",
+      "blouse": "Unstitched piece",
+      "condition": "Worn once",
+      "price": 11000,
+      "original": 32000,
+      "colors": [
+        "#1B5E4A",
+        "#D9AE63"
+      ],
+      "photo": "",
+      "status": "available"
+    },
+    {
+      "id": 3,
+      "name": "Blush organza with hand embroidery",
+      "occasion": "Reception",
+      "fabric": "Organza",
+      "blouse": "Stitched, size 36",
+      "condition": "Like new",
+      "price": 6200,
+      "original": 18500,
+      "colors": [
+        "#F4B6B0",
+        "#FFFFFF"
+      ],
+      "photo": "",
+      "status": "available"
+    },
+    {
+      "id": 4,
+      "name": "Black georgette with sequin pallu",
+      "occasion": "Party",
+      "fabric": "Georgette",
+      "blouse": "Stitched, size 40",
+      "condition": "Worn twice",
+      "price": 4500,
+      "original": 13000,
+      "colors": [
+        "#222222",
+        "#C9C9D6"
+      ],
+      "photo": "",
+      "status": "available"
+    },
+    {
+      "id": 5,
+      "name": "Yellow chiffon with gota border",
+      "occasion": "Festive",
+      "fabric": "Chiffon",
+      "blouse": "Unstitched piece",
+      "condition": "Worn once",
+      "price": 2900,
+      "original": 8500,
+      "colors": [
+        "#E8B923",
+        "#C2185B"
+      ],
+      "photo": "",
+      "status": "available"
+    }
+  ]
+}

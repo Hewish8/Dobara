@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Mukta:wght@400;500;700&display=swap" rel="stylesheet">
+<title>{{ s.name }} — pre-loved sarees</title>
+<meta name="description" content="{{ s.tagline }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/shop.css') }}">
+</head>
+<body>
+<div class="zari" aria-hidden="true"></div>
+
+<header class="hero wrap">
+  <h1 class="brand">{{ s.name }}</h1>
+  <p class="lede">{{ s.tagline }}</p>
+  <div class="actions">
+    <a class="btn" href="#shop">See sarees</a>
+    <a class="btn ghost" href="#sell">Sell yours</a>
+  </div>
+</header>
+
+<main>
+  <section id="shop" class="wrap">
+    <h2>In stock now</h2>
+    <p class="new-note" id="newNote" hidden></p>
+    <div class="tools">
+      <label class="search"><span class="sr">Search sarees</span><input type="search" id="q" placeholder="Search colour, fabric or occasion" enterkeyhint="search" autocomplete="off"></label>
+      <label class="sr" for="fabric">Fabric</label>
+      <select id="fabric"></select>
+      <label class="sr" for="sort">Sort by</label>
+      <select id="sort">
+        <option value="new">Newest first</option>
+        <option value="low">Price: low to high</option>
+        <option value="high">Price: high to low</option>
+        <option value="save">Biggest saving</option>
+      </select>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter sarees"></div>
+    <p class="count" id="count" aria-live="polite"></p>
+    <div class="grid" id="grid"></div>
+    <div class="alerts">
+      <p><b>Want first pick?</b> We'll message you when new sarees come in.</p>
+      {% if data.shop.hasWhatsapp %}<a class="btn ghost" href="{{ url_for('go_contact', kind='alert') }}" target="_blank" rel="noopener">Tell me on WhatsApp</a>{% endif %}
+    </div>
+  </section>
+
+  {% if s.steps_list %}
+  <section class="wrap">
+    <h2>How buying works</h2>
+    <ol class="steps">
+      {% for title, body in s.steps_list %}<li><b>{{ title }}</b>{{ body }}</li>{% endfor %}
+    </ol>
+  </section>
+  {% endif %}
+
+  <section id="sell" class="sell">
+    <div class="wrap">
+      <h2>{{ s.sell_title }}</h2>
+      <p>{{ s.sell_text }}</p>
+      {% if data.shop.hasWhatsapp %}<a class="btn" href="{{ url_for('go_contact', kind='sell') }}" target="_blank" rel="noopener">Send photos on WhatsApp</a>{% endif %}
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  {{ s.name }} · {{ s.footer }}
+</footer>
+<div class="zari" aria-hidden="true"></div>
+
+<dialog class="detail" id="detail" aria-labelledby="dtName"><div id="detailBody"></div></dialog>
+
+<script id="shop-data" type="application/json">{{ data|tojson }}</script>
+<script src="{{ url_for('static', filename='js/shop.js') }}"></script>
+</body>
+</html>

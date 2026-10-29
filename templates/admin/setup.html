@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% block title %}Set up{% endblock %}
+{% block content %}
+<div class="auth">
+  <p class="brand">Dobara</p>
+  <h1>Create the first admin</h1>
+  <p class="muted">This page only works once. After this, new admins are added from the Admins page.</p>
+  {% if error %}<div class="error-box">{{ error }}</div>{% endif %}
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label class="field">Username<input type="text" name="username" autocomplete="username" required autofocus value="{{ request.form.username }}"></label>
+    <label class="field">Password (8+ characters)<input type="password" name="password" autocomplete="new-password" minlength="8" required></label>
+    <label class="field">Confirm password<input type="password" name="confirm" autocomplete="new-password" minlength="8" required></label>
+    <button class="btn" type="submit">Create admin account</button>
+  </form>
+</div>
+{% endblock %}

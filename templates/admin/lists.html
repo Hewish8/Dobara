@@ -1,0 +1,40 @@
+{% extends "admin/base.html" %}
+{% block title %}Lists{% endblock %}
+{% block content %}
+<h1>Lists</h1>
+<p class="muted">These fill the dropdowns when you add a saree. Categories become the filter chips on the shop.
+Renaming an entry also updates every saree that uses it.</p>
+
+<div class="two">
+{% for kind, label in LIST_KINDS.items() %}
+<section class="card" id="{{ kind }}">
+  <h2>{{ label }}</h2>
+  <ul class="list-items">
+    {% for o in lists[kind] %}
+    <li>
+      <form class="rename" method="post" action="{{ url_for('admin_list_rename', option_id=o.id) }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <label style="flex:1"><span hidden>Rename {{ o.name }}</span><input type="text" name="name" value="{{ o.name }}" maxlength="60" required></label>
+        <button class="btn ghost small" type="submit">Rename</button>
+      </form>
+      <span class="used">{{ o.used }} saree{{ 's' if o.used != 1 }}</span>
+      <form class="inline" method="post" action="{{ url_for('admin_list_delete', option_id=o.id) }}"
+            onsubmit='return confirm({{ ("Remove “" ~ o.name ~ "” from this list?")|tojson }})'>
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <button class="linkbtn" type="submit">Remove</button>
+      </form>
+    </li>
+    {% else %}
+    <li class="muted">Nothing here yet.</li>
+    {% endfor %}
+  </ul>
+  <form class="add-row" method="post" action="{{ url_for('admin_list_add') }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <input type="hidden" name="kind" value="{{ kind }}">
+    <label style="flex:1"><span hidden>New entry</span><input type="text" name="name" maxlength="60" placeholder="Add new…" required></label>
+    <button class="btn small" type="submit">Add</button>
+  </form>
+</section>
+{% endfor %}
+</div>
+{% endblock %}

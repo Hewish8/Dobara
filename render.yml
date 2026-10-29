@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: dobara-shop
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python serve.py
+    healthCheckPath: /healthz
+    envVars:
+      - key: DOBARA_SECRET_KEY
+        generateValue: true
+      - key: PORT
+        value: 10000
+      - key: HOST
+        value: 0.0.0.0
+      - key: DOBARA_SECURE_COOKIES
+        value: 1

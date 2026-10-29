@@ -1,0 +1,76 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ 'Edit saree' if row.id else 'Add a saree' }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('admin_sarees') }}">← All sarees</a></p>
+<h1>{{ 'Edit “' ~ row.name ~ '”' if row.id else 'Add a saree' }}</h1>
+
+<form method="post" enctype="multipart/form-data" class="card">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+
+  <h2>Photo</h2>
+  <div class="photo-box" style="margin-bottom:1.25rem">
+    <div class="big" id="preview">
+      {% if row.photo %}<img src="{{ photo_url(row.photo) }}" alt="">
+      {% else %}<div style="width:100%;height:100%;background:linear-gradient(160deg, {{ row.color_main }} 70%, {{ row.color_trim }} 70%)"></div>{% endif %}
+    </div>
+    <div class="field" style="flex:1 1 14rem">
+      {{ 'Replace photo' if row.photo else 'Upload a photo' }}
+      <input type="file" name="photo" accept="image/*" id="photoInput">
+      <span class="hint">JPG, PNG or WEBP, up to 12 MB. Large photos are resized automatically. A 4:5 portrait shot looks best.</span>
+      {% if row.photo %}<label class="check"><input type="checkbox" name="remove_photo" value="1"> Remove photo (show an illustration instead)</label>{% endif %}
+      <div style="margin-top:.6rem">
+        <span>Illustration colours (used when there's no photo)</span>
+        <div class="colors">
+          <input type="color" name="color_main" value="{{ row.color_main }}" aria-label="Main colour">
+          <input type="color" name="color_trim" value="{{ row.color_trim }}" aria-label="Border colour">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Details</h2>
+  <div class="form-grid">
+    <label class="field wide">Name<input type="text" name="name" value="{{ row.name }}" required maxlength="200" placeholder="e.g. Red Kanjeevaram silk with temple border"></label>
+    <label class="field">Price<input type="number" name="price" min="0" step="1" inputmode="numeric" value="{{ row.price }}" required></label>
+    <label class="field">Original price (optional)<input type="number" name="original" min="0" step="1" inputmode="numeric" value="{{ row.original }}"></label>
+    <label class="field">Category
+      <select name="occasion">
+        <option value="">Choose…</option>
+        {% set occ = options.occasion if row.occasion in options.occasion or not row.occasion else options.occasion + [row.occasion] %}
+        {% for o in occ %}<option {{ 'selected' if o == row.occasion }}>{{ o }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="field">Fabric<input type="text" name="fabric" list="fabricList" value="{{ row.fabric }}" maxlength="60"></label>
+    <label class="field">Condition<input type="text" name="condition" list="conditionList" value="{{ row.condition }}" maxlength="60"></label>
+    <label class="field">Blouse<input type="text" name="blouse" value="{{ row.blouse }}" maxlength="120" placeholder="e.g. Stitched, size 38"></label>
+    <label class="field">Status
+      <select name="status">
+        {% for st in statuses %}<option value="{{ st }}" {{ 'selected' if st == row.status }}>{{ STATUS_LABELS[st] }}</option>{% endfor %}
+      </select>
+      <span class="hint">Hidden = not shown on the shop. On hold = shown but can't be ordered.</span>
+    </label>
+    <label class="field wide">Description (optional, shown on the detail view)<textarea name="description" maxlength="2000">{{ row.description }}</textarea></label>
+  </div>
+  <datalist id="fabricList">{% for o in options.fabric %}<option>{{ o }}</option>{% endfor %}</datalist>
+  <datalist id="conditionList">{% for o in options.condition %}<option>{{ o }}</option>{% endfor %}</datalist>
+
+  <div class="form-actions">
+    <button class="btn" type="submit">{{ 'Save changes' if row.id else 'Add saree' }}</button>
+    <a class="btn ghost" href="{{ url_for('admin_sarees') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  document.getElementById("photoInput").addEventListener("change", function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var img = document.createElement("img");
+    img.alt = "";
+    img.src = URL.createObjectURL(f);
+    var box = document.getElementById("preview");
+    box.innerHTML = "";
+    box.appendChild(img);
+  });
+</script>
+{% endblock %}

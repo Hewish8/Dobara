@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+{% block title %}Sarees{% endblock %}
+{% block content %}
+<div class="toolbar">
+  <h1 class="grow" style="margin:0">Sarees</h1>
+  <a class="btn" href="{{ url_for('admin_saree_form') }}">+ Add a saree</a>
+</div>
+
+<form class="toolbar" method="get">
+  <label class="grow"><span class="muted" hidden>Search</span><input type="search" name="q" value="{{ q }}" placeholder="Search name, fabric, category…"></label>
+  {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+  <button class="btn ghost small" type="submit">Search</button>
+</form>
+<div class="pills" style="margin-bottom:1rem">
+  <a href="{{ url_for('admin_sarees', q=q or None) }}" class="{{ 'on' if not status }}">All</a>
+  {% for st in statuses %}
+  <a href="{{ url_for('admin_sarees', status=st, q=q or None) }}" class="{{ 'on' if status == st }}">{{ STATUS_LABELS[st] }}</a>
+  {% endfor %}
+</div>
+
+{% if rows %}
+<div class="table-wrap">
+<table>
+  <thead><tr><th></th><th>Saree</th><th class="num">Price</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+  <tr>
+    <td><a class="thumb" href="{{ url_for('admin_saree_form', saree_id=r.id) }}">
+      {% if r.photo %}<img src="{{ photo_url(r.photo) }}" alt="" loading="lazy">
+      {% else %}<span class="sw" style="background:linear-gradient(160deg, {{ r.color_main }} 70%, {{ r.color_trim }} 70%)"></span>{% endif %}
+    </a></td>
+    <td><a href="{{ url_for('admin_saree_form', saree_id=r.id) }}"><b>{{ r.name }}</b></a><br>
+      <span class="muted">{{ [r.fabric, r.occasion, r.condition]|select|join(' · ') }}</span></td>
+    <td class="num"><b>{{ money(r.price) }}</b>{% if pct_off(r.price, r.original) %}<br><span class="muted"><s>{{ money(r.original) }}</s> · {{ pct_off(r.price, r.original) }}% off</span>{% endif %}</td>
+    <td><span class="badge {{ r.status }}">{{ STATUS_LABELS[r.status] }}</span></td>
+    <td>
+      <div class="row-actions">
+        <form class="inline" method="post" action="{{ url_for('admin_saree_status', saree_id=r.id) }}">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <input type="hidden" name="back" value="{{ request.full_path }}">
+          <label><span hidden>Status for {{ r.name }}</span>
+          <select name="status" onchange="this.form.submit()">
+            {% for st in statuses %}<option value="{{ st }}" {{ 'selected' if st == r.status }}>{{ STATUS_LABELS[st] }}</option>{% endfor %}
+          </select></label>
+          <noscript><button class="btn ghost small">Set</button></noscript>
+        </form>
+        <a class="btn ghost small" href="{{ url_for('admin_saree_form', saree_id=r.id) }}">Edit</a>
+        <form class="inline" method="post" action="{{ url_for('admin_saree_delete', saree_id=r.id) }}"
+              onsubmit='return confirm({{ ("Delete “" ~ r.name ~ "” for good? This also removes its photo.")|tojson }})'>
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button class="linkbtn" type="submit">Delete</button>
+        </form>
+      </div>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="muted">{{ rows|length }} saree{{ 's' if rows|length != 1 }} shown.</p>
+{% else %}
+<div class="card muted">No sarees match. <a href="{{ url_for('admin_saree_form') }}">Add one</a>.</div>
+{% endif %}
+{% endblock %}

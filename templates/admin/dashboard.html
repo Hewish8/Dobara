@@ -1,0 +1,83 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="toolbar">
+  <h1 class="grow" style="margin:0">Dashboard</h1>
+  <a class="btn" href="{{ url_for('admin_saree_form') }}">+ Add a saree</a>
+</div>
+
+{% if no_whatsapp %}
+<div class="error-box">No WhatsApp number is set, so customers can't order. <a href="{{ url_for('admin_settings') }}">Add it in Shop settings</a>.</div>
+{% endif %}
+
+<div class="stats">
+  <div class="stat"><div class="n">{{ counts.available }}</div><div class="l">Available</div></div>
+  <div class="stat"><div class="n">{{ counts.reserved }}</div><div class="l">On hold</div></div>
+  <div class="stat"><div class="n">{{ counts.sold }}</div><div class="l">Sold</div></div>
+  <div class="stat"><div class="n">{{ counts.hidden }}</div><div class="l">Hidden drafts</div></div>
+  <div class="stat"><div class="n">{{ money(stock_value) }}</div><div class="l">Stock value (available + on hold)</div></div>
+  <div class="stat"><div class="n">{{ money(sales_month[0]) }}</div><div class="l">Sales this month ({{ sales_month[1] }})</div></div>
+  <div class="stat"><div class="n">{{ money(sales_total) }}</div><div class="l">All-time sales</div></div>
+</div>
+
+<div class="two">
+  <section class="card">
+    <h2>WhatsApp taps, last 30 days</h2>
+    <p class="muted" style="margin-top:0">Counted each time a visitor taps a WhatsApp button on the shop.</p>
+    <table>
+      <tr><td>"Order on WhatsApp"</td><td class="num"><b>{{ clicks.order }}</b></td></tr>
+      <tr><td>"Send photos" (people selling)</td><td class="num"><b>{{ clicks.sell }}</b></td></tr>
+      <tr><td>"Tell me" (new-stock alerts)</td><td class="num"><b>{{ clicks.alert }}</b></td></tr>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Most asked-about sarees</h2>
+    {% if top %}
+    <table>
+      {% for r in top %}
+      <tr><td><a href="{{ url_for('admin_saree_form', saree_id=r.id) }}">{{ r.name }}</a> <span class="badge {{ r.status }}">{{ STATUS_LABELS[r.status] }}</span></td><td class="num">{{ r.n }} taps</td></tr>
+      {% endfor %}
+    </table>
+    {% else %}<p class="muted">No order taps yet.</p>{% endif %}
+  </section>
+  <section class="card">
+    <h2>On hold</h2>
+    {% if on_hold %}
+    <table>
+      {% for r in on_hold %}
+      <tr>
+        <td><a href="{{ url_for('admin_saree_form', saree_id=r.id) }}">{{ r.name }}</a><br><span class="muted">{{ money(r.price) }}</span></td>
+        <td class="num">
+          <form class="inline" method="post" action="{{ url_for('admin_saree_status', saree_id=r.id) }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <input type="hidden" name="back" value="{{ url_for('admin_dashboard') }}">
+            <button class="btn small" name="status" value="sold">Mark sold</button>
+            <button class="btn ghost small" name="status" value="available">Release</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}<p class="muted">Nothing on hold. Set a saree to "On hold" once a buyer has paid.</p>{% endif %}
+  </section>
+  <section class="card">
+    <h2>Recently sold</h2>
+    {% if recent_sold %}
+    <table>
+      {% for r in recent_sold %}
+      <tr><td><a href="{{ url_for('admin_saree_form', saree_id=r.id) }}">{{ r.name }}</a></td><td class="num">{{ money(r.price) }}<br><span class="muted">{{ (r.sold_at or '')[:10] }}</span></td></tr>
+      {% endfor %}
+    </table>
+    {% else %}<p class="muted">No sales recorded yet.</p>{% endif %}
+  </section>
+</div>
+
+<section class="card">
+  <h2>Backups</h2>
+  <p class="muted" style="margin-top:0">Download your data. Photos live in <code>static/uploads</code>; copy that folder too.</p>
+  <div class="row-actions">
+    <a class="btn ghost small" href="{{ url_for('admin_export_csv') }}">Sarees as CSV (Excel)</a>
+    <a class="btn ghost small" href="{{ url_for('admin_backup') }}">Full backup (JSON)</a>
+  </div>
+</section>
+{% endblock %}
